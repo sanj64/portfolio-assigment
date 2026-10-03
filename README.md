@@ -3,7 +3,7 @@
 A matrix-themed, responsive personal portfolio built for the Full Stack Development course - Assignment-1.
 
 ## Live Demo
-Click [Here](sanj64.github.io/portfolio-assignment)
+Click [Here](sanj64.github.io/portfolio-assigment)
 
 ## Features
 - Semantic HTML5 structure — Home, About, Education, Skills, Projects, Contact
