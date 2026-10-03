@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sanjukta Deshpande — Portfolio</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<style>
+:root{
+  --bg:#05080a; --bg-alt:#0a120d; --panel:#0c1510cc;
+  --fg:#c7f2d2; --muted:#5f8f72; --accent:#39ff88; --accent-dim:#0f3d24;
+  --warn:#ffb020; --font:'JetBrains Mono', monospace;
+  --bs-body-color:#c7f2d2; --bs-body-bg:#05080a; --bs-border-color:#0f3d24;
+}
+*{box-sizing:border-box}
+body{background:var(--bg); color:var(--fg); font-family:var(--font); line-height:1.65; overflow-x:hidden;}
+a{color:var(--accent); text-decoration:none}
+::selection{background:var(--accent); color:#000}
+h1,h2,h3{font-family:var(--font); letter-spacing:.5px}
+#matrix-rain{position:fixed; inset:0; z-index:-2; opacity:.35;}
+.scanlines{position:fixed; inset:0; z-index:-1; pointer-events:none;
+  background:repeating-linear-gradient(0deg, rgba(0,0,0,0) 0, rgba(0,0,0,0) 2px, rgba(0,0,0,.25) 3px);}
+.section{padding:5rem 0; border-bottom:1px solid var(--accent-dim);}
+.navbar{background:rgba(5,8,10,.85)!important; backdrop-filter:blur(6px); border-bottom:1px solid var(--accent-dim);}
+.navbar-brand, .nav-link{color:var(--fg)!important; font-weight:500}
+.nav-link:hover{color:var(--accent)!important}
+.prompt::before{content:"$ "; color:var(--accent);}
+.glitch{position:relative; display:inline-block;}
+.glitch:hover{animation:glitch .35s steps(2) 2;}
+@keyframes glitch{
+  0%{transform:translate(0)} 20%{transform:translate(-2px,1px)}
+  40%{transform:translate(2px,-1px)} 60%{transform:translate(-1px,0)} 100%{transform:translate(0)}
+}
+.cursor{display:inline-block; width:.55ch; background:var(--accent); animation:blink 1s step-start infinite;}
+@keyframes blink{50%{opacity:0}}
+.btn-matrix{background:transparent; border:1px solid var(--accent); color:var(--accent); font-family:var(--font);}
+.btn-matrix:hover{background:var(--accent); color:#000;}
+.card-matrix{--bs-card-color:var(--fg); background:var(--panel); border:1px solid var(--accent-dim); border-radius:4px; color:var(--fg); transition:border-color .2s, transform .2s;}
+.card-matrix:hover{border-color:var(--accent); transform:translateY(-3px);}
+.badge-tech{background:var(--accent-dim); color:var(--accent); font-weight:500; margin:2px;}
+.edu-log{margin-top:.5rem;}
+.edu-entry{color:var(--accent); font-weight:500; margin:1.1rem 0 0;}
+.edu-entry::before{content:"> "; color:var(--fg);}
+.edu-detail{color:#cfeed9; opacity:.75; margin:.15rem 0 0 1.4ch;}
+.form-control{background:#081009; border:1px solid var(--accent-dim); color:var(--fg); font-family:var(--font);}
+.form-control:focus{background:#081009; border-color:var(--accent); box-shadow:0 0 0 .2rem rgba(57,255,136,.15); color:var(--fg);}
+.filter-btn.active{background:var(--accent); color:#000;}
+.section-label{color:var(--muted); font-size:.85rem; margin-bottom:.5rem;}
+footer{padding:2rem 0; text-align:center; color:var(--muted); font-size:.85rem;}
+#live-region{min-height:1.5rem;}
+.text-dim{color:#cfeed9; opacity:.75;}
+.skill-link{cursor:pointer; border:1px solid var(--accent-dim); background:var(--accent-dim); color:var(--accent); font:inherit; font-weight:500; margin:2px; padding:.35em .65em; border-radius:.375rem; transition:background .15s, color .15s;}
+.skill-link:hover{background:var(--accent); color:#000;}
+.skill-link:focus-visible{outline:2px solid var(--accent); outline-offset:2px;}
+.skill-flash{animation:flash 1s ease;}
+@keyframes flash{0%,100%{border-color:var(--accent-dim)} 30%{border-color:var(--accent); box-shadow:0 0 12px rgba(57,255,136,.5)}}
+#boot-overlay{position:fixed; inset:0; z-index:999; background:#000; display:flex; align-items:center; justify-content:center; flex-direction:column; transition:opacity .7s ease; cursor:pointer;}
+#boot-overlay.hide{opacity:0; pointer-events:none;}
+#boot-overlay p{font-family:var(--font); margin:.15rem 0; transition:opacity .4s;}
+#boot-overlay .skip-hint{position:absolute; bottom:1.5rem; font-size:.75rem; color:var(--muted);}
+</style>
+</head>
+<body>
+
+<div id="boot-overlay">
+  <div id="boot-lines"></div>
+  <p class="skip-hint">click to skip_</p>
+</div>
+
+<canvas id="matrix-rain"></canvas>
+<div class="scanlines"></div>
+
+<nav class="navbar navbar-expand-md fixed-top">
+  <div class="container">
+    <a class="navbar-brand" href="#home">~/sanjukta</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav" style="border-color:var(--accent-dim)">
+      <span class="navbar-toggler-icon" style="filter:invert(1)"></span>
+    </button>
+    <div class="collapse navbar-collapse justify-content-end" id="nav">
+      <ul class="navbar-nav gap-3">
+        <li class="nav-item"><a class="nav-link" href="#about">about</a></li>
+        <li class="nav-item"><a class="nav-link" href="#education">education</a></li>
+        <li class="nav-item"><a class="nav-link" href="#skills">skills</a></li>
+        <li class="nav-item"><a class="nav-link" href="#projects">projects</a></li>
+        <li class="nav-item"><a class="nav-link" href="#contact">contact</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<header id="home" class="section d-flex align-items-center" style="min-height:100vh; padding-top:6rem;">
+  <div class="container">
+    <p class="prompt section-label">whoami</p>
+    <h1 class="display-4 glitch" style="color:var(--accent)">Sanjukta Deshpande</h1>
+    <p id="typed" class="fs-5" style="min-height:2.2rem; color:var(--fg)"></p>
+    <div class="mt-4 d-flex gap-3 flex-wrap">
+      <a href="#projects" class="btn btn-matrix px-4 py-2">view_projects()</a>
+      <a href="#contact" class="btn btn-matrix px-4 py-2">contact_me()</a>
+    </div>
+  </div>
+</header>
+
+<section id="about" class="section">
+  <div class="container">
+    <p class="prompt section-label">cat about.txt</p>
+    <h2 class="mb-4">About</h2>
+    <p class="fs-5" style="max-width:70ch">
+      Computer Science & Engineering student at Stanley College of Engineering and Technology for Women,
+      building backend systems, AI agents, and applied ML pipelines. Recent work spans an AI voice-calling
+      module built on Twilio and an LLM integration, a full-stack fleet-intelligence platform, and an
+      ML pipeline for HR salary analysis. Currently looking for a software development internship to
+      keep building production-grade systems alongside an experienced team.
+    </p>
+  </div>
+</section>
+
+<section id="education" class="section">
+  <div class="container">
+    <p class="prompt section-label">cat education.log</p>
+    <h2 class="mb-4">Education</h2>
+    <div class="edu-log">
+      <p class="edu-entry">Stanley College of Engineering &amp; Technology for Women</p>
+      <p class="edu-detail">B.E. — Computer Science and Engineering · 2023 – 2027 · CGPA 8.69</p>
+      <p class="edu-entry">St. Joseph's Public School</p>
+      <p class="edu-detail">Mathematics, Physics, Chemistry · 2020 – 2022 · Grade A</p>
+    </div>
+  </div>
+</section>
+
+<section id="skills" class="section">
+  <div class="container">
+    <p class="prompt section-label">ls skills/</p>
+    <h2 class="mb-4">Skills</h2>
+    <p class="text-dim small mb-3">click a skill to jump to a project that uses it →</p>
+    <div class="row g-4">
+      <div class="col-md-4">
+        <h6 style="color:var(--accent)">Languages & Frameworks</h6>
+        <div>
+          <button class="skill-link" data-skill="java">Java</button><button class="skill-link" data-skill="python">Python</button>
+          <button class="skill-link" data-skill="sql">SQL</button><button class="skill-link" data-skill="spring-boot">Spring Boot</button>
+          <button class="skill-link" data-skill="react">React</button><button class="skill-link" data-skill="fastapi">FastAPI</button>
+          <button class="skill-link" data-skill="java-swing">Java Swing</button>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <h6 style="color:var(--accent)">Data & Databases</h6>
+        <div>
+          <button class="skill-link" data-skill="mysql">MySQL</button><button class="skill-link" data-skill="postgresql">PostgreSQL</button>
+          <button class="skill-link" data-skill="scikit-learn">scikit-learn</button><button class="skill-link" data-skill="xgboost">XGBoost</button>
+          <button class="skill-link" data-skill="pandas">Pandas</button><button class="skill-link" data-skill="matplotlib">Matplotlib</button>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <h6 style="color:var(--accent)">Tools & Libraries</h6>
+        <div>
+          <button class="skill-link" data-skill="git">Git</button><button class="skill-link" data-skill="twilio">Twilio</button>
+          <button class="skill-link" data-skill="whisper">Whisper</button><button class="skill-link" data-skill="jwt">JWT</button>
+          <button class="skill-link" data-skill="leaflet.js">Leaflet.js</button><button class="skill-link" data-skill="streamlit">Streamlit</button>
+          <button class="skill-link" data-skill="gson">Gson</button>
+        </div>
+      </div>
+      <div class="col-12">
+        <h6 class="mt-2" style="color:var(--accent)">Certifications</h6>
+        <p class="text-dim mb-0">Information Security (Saylor University) · Quantum Computing (CDAC & IIT Roorkee) · Advanced Software Engineering — Walmart USA (Forage)</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="projects" class="section">
+  <div class="container">
+    <p class="prompt section-label">ls projects/</p>
+    <h2 class="mb-4">Projects</h2>
+    <div class="d-flex gap-2 flex-wrap mb-4" id="filters">
+      <button class="btn btn-matrix filter-btn active" data-filter="all">all</button>
+      <button class="btn btn-matrix filter-btn" data-filter="backend">backend</button>
+      <button class="btn btn-matrix filter-btn" data-filter="ml">ml</button>
+      <button class="btn btn-matrix filter-btn" data-filter="fullstack">fullstack</button>
+    </div>
+    <div class="row g-4" id="project-grid">
+
+      <div class="col-md-6 col-lg-4 project-card" data-cat="backend">
+        <div class="card card-matrix h-100 p-3">
+          <h5 style="color:var(--accent)">Cart Abandonment Voice Agent</h5>
+          <p class="text-dim small">Purview India Consulting — Team Lead</p>
+          <p>Led architecture for a 4-person team; built the AI voice-calling &amp; communications module using Twilio, Whisper, gTTS, and an LLM (Grok API) integration. Solved a Twilio call-timeout bug with an 18s keep-alive window during processing.</p>
+          <div><button class="skill-link" data-skill="fastapi">FastAPI</button><button class="skill-link" data-skill="twilio">Twilio</button><button class="skill-link" data-skill="whisper">Whisper</button><button class="skill-link" data-skill="postgresql">PostgreSQL</button></div>
+          <a href="#" class="btn btn-matrix btn-sm mt-3 align-self-start">GitHub →</a>
+        </div>
+      </div>
+
+      <div class="col-md-6 col-lg-4 project-card" data-cat="fullstack">
+        <div class="card card-matrix h-100 p-3">
+          <h5 style="color:var(--accent)">NeuroFleetX</h5>
+          <p class="text-dim small">Infosys Springboard Internship 6.0</p>
+          <p>AI-driven urban mobility platform for real-time fleet and routing optimization. Built the backend with Spring Boot, frontend with React, interactive mapping with Leaflet.js, and secured endpoints with Spring Security + JWT.</p>
+          <div><button class="skill-link" data-skill="spring-boot">Spring Boot</button><button class="skill-link" data-skill="react">React</button><button class="skill-link" data-skill="jwt">JWT</button><button class="skill-link" data-skill="leaflet.js">Leaflet.js</button></div>
+          <a href="#" class="btn btn-matrix btn-sm mt-3 align-self-start">GitHub →</a>
+        </div>
+      </div>
+
+      <div class="col-md-6 col-lg-4 project-card" data-cat="ml">
+        <div class="card card-matrix h-100 p-3">
+          <h5 style="color:var(--accent)">Employee Salary Analysis</h5>
+          <p class="text-dim small">Edunet Foundation × IBM SkillsBuild</p>
+          <p>End-to-end ML pipeline predicting employee salary ranges for HR benchmarking. Trained an XGBoost classifier on preprocessed data and deployed it as a real-time Streamlit app.</p>
+          <div><button class="skill-link" data-skill="python">Python</button><button class="skill-link" data-skill="xgboost">XGBoost</button><button class="skill-link" data-skill="streamlit">Streamlit</button></div>
+          <a href="#" class="btn btn-matrix btn-sm mt-3 align-self-start">GitHub →</a>
+        </div>
+      </div>
+
+      <div class="col-md-6 col-lg-4 project-card" data-cat="fullstack">
+        <div class="card card-matrix h-100 p-3">
+          <h5 style="color:var(--accent)">College ERP System</h5>
+          <p class="text-dim small">Stanley College — Primary Developer</p>
+          <p>Led a 6-member team building an ERP system with a dynamic, no-code form-management engine — form definitions stored as JSON and rendered at runtime, cutting update cycles from days to minutes.</p>
+          <div><button class="skill-link" data-skill="java-swing">Java Swing</button><button class="skill-link" data-skill="mysql">MySQL</button><button class="skill-link" data-skill="gson">Gson</button></div>
+          <a href="#" class="btn btn-matrix btn-sm mt-3 align-self-start">GitHub →</a>
+        </div>
+      </div>
+
+      <div class="col-md-6 col-lg-4 project-card" data-cat="ml">
+        <div class="card card-matrix h-100 p-3">
+          <h5 style="color:var(--accent)">Time-Series Anomaly Detection</h5>
+          <p class="text-dim small">Personal Project</p>
+          <p>Unsupervised anomaly detection pipeline using Isolation Forest on synthetic time-series data, with interactive Matplotlib visualization of flagged points.</p>
+          <div><button class="skill-link" data-skill="scikit-learn">scikit-learn</button><button class="skill-link" data-skill="pandas">Pandas</button><button class="skill-link" data-skill="matplotlib">Matplotlib</button></div>
+          <a href="#" class="btn btn-matrix btn-sm mt-3 align-self-start">GitHub →</a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<section id="contact" class="section">
+  <div class="container">
+    <p class="prompt section-label">./send_message.sh</p>
+    <h2 class="mb-4">Contact</h2>
+    <form id="contact-form" class="row g-3" style="max-width:600px" novalidate>
+      <div class="col-12">
+        <label class="form-label">name</label>
+        <input type="text" class="form-control" id="name" required>
+        <div class="invalid-feedback">name is required.</div>
+      </div>
+      <div class="col-12">
+        <label class="form-label">email</label>
+        <input type="email" class="form-control" id="email" required>
+        <div class="invalid-feedback">enter a valid email address.</div>
+      </div>
+      <div class="col-12">
+        <label class="form-label">message</label>
+        <textarea class="form-control" id="message" rows="4" required></textarea>
+        <div class="invalid-feedback">message can't be empty.</div>
+      </div>
+      <div class="col-12">
+        <button type="submit" class="btn btn-matrix px-4 py-2">transmit()</button>
+      </div>
+      <div class="col-12" id="live-region" aria-live="polite"></div>
+    </form>
+  </div>
+</section>
+
+<footer>
+  <p class="prompt">connect: <a href="https://github.com/sanj64" target="_blank">github.com/sanj64</a> · <a href="https://linkedin.com/in/sanjuktadeshpande/" target="_blank">linkedin</a></p>
+  <p>&copy; 2026 Sanjukta Deshpande</p>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+// --- Boot sequence (echo/collapse intro) ---
+(function(){
+  const overlay = document.getElementById('boot-overlay');
+  const container = document.getElementById('boot-lines');
+  const lines = ["booting terminal_", "loading profile: sanjukta_deshpande", "decrypting experience.log", "access granted"];
+  function endBoot(){
+    overlay.classList.add('hide');
+    setTimeout(()=> overlay.remove(), 800);
+  }
+  overlay.addEventListener('click', endBoot);
+  if(window.matchMedia('(prefers-reduced-motion: reduce)').matches){ endBoot(); return; }
+  let i = 0;
+  function nextLine(){
+    Array.from(container.children).forEach(c => c.style.opacity = '.15');
+    if(i < lines.length){
+      const p = document.createElement('p');
+      p.textContent = lines[i];
+      p.style.color = (i === lines.length - 1) ? 'var(--accent)' : 'var(--fg)';
+      container.appendChild(p);
+      i++;
+      setTimeout(nextLine, 550);
+    } else {
+      setTimeout(endBoot, 700);
+    }
+  }
+  nextLine();
+})();
+
+// --- Skill <-> project scroll linking ---
+document.querySelectorAll('.skill-link').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    const skill = btn.dataset.skill;
+    const fromSkillsSection = !!btn.closest('#skills');
+    if(fromSkillsSection){
+      document.querySelector('.filter-btn[data-filter="all"]').click();
+      const match = document.querySelector('.project-card [data-skill="'+skill+'"]');
+      if(match){
+        const card = match.closest('.project-card');
+        card.scrollIntoView({behavior:'smooth', block:'center'});
+        card.classList.add('skill-flash');
+        setTimeout(()=>card.classList.remove('skill-flash'), 1000);
+      }
+    } else {
+      const match = document.querySelector('#skills [data-skill="'+skill+'"]');
+      if(match){
+        match.scrollIntoView({behavior:'smooth', block:'center'});
+        match.classList.add('skill-flash');
+        setTimeout(()=>match.classList.remove('skill-flash'), 1000);
+      }
+    }
+  });
+});
+
+// --- Matrix rain ---
+const canvas = document.getElementById('matrix-rain');
+const ctx = canvas.getContext('2d');
+let w, h, drops, fontSize = 15;
+function resize(){
+  w = canvas.width = window.innerWidth;
+  h = canvas.height = window.innerHeight;
+  drops = Array(Math.floor(w / fontSize)).fill(1);
+}
+window.addEventListener('resize', resize);
+resize();
+const chars = "アイウエオカキクケコサシスセソ01010101{}<>/#$%&*".split("");
+function draw(){
+  ctx.fillStyle = "rgba(5,8,10,0.08)";
+  ctx.fillRect(0,0,w,h);
+  ctx.fillStyle = "#39ff88";
+  ctx.font = fontSize + "px monospace";
+  drops.forEach((y,i)=>{
+    const text = chars[Math.floor(Math.random()*chars.length)];
+    ctx.fillText(text, i*fontSize, y*fontSize);
+    if(y*fontSize > h && Math.random() > 0.975) drops[i] = 0;
+    drops[i]++;
+  });
+}
+setInterval(draw, 50);
+
+// --- Typing effect ---
+const phrases = ["building backend systems & AI agents.", "turning data into decisions.", "open to software dev internships."];
+let pIdx=0, cIdx=0, el=document.getElementById('typed');
+function type(){
+  if(cIdx <= phrases[pIdx].length){
+    el.innerHTML = phrases[pIdx].slice(0,cIdx) + '<span class="cursor">&nbsp;</span>';
+    cIdx++;
+    setTimeout(type, 45);
+  } else {
+    setTimeout(()=>{ cIdx=0; pIdx=(pIdx+1)%phrases.length; type(); }, 1800);
+  }
+}
+type();
+
+// --- Project filter ---
+document.querySelectorAll('.filter-btn').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    const f = btn.dataset.filter;
+    document.querySelectorAll('.project-card').forEach(card=>{
+      card.style.display = (f==='all' || card.dataset.cat===f) ? '' : 'none';
+    });
+  });
+});
+
+// --- Form validation ---
+document.getElementById('contact-form').addEventListener('submit', function(e){
+  e.preventDefault();
+  let valid = true;
+  ['name','email','message'].forEach(id=>{
+    const field = document.getElementById(id);
+    const ok = field.checkValidity();
+    field.classList.toggle('is-invalid', !ok);
+    field.classList.toggle('is-valid', ok);
+    if(!ok) valid = false;
+  });
+  const live = document.getElementById('live-region');
+  if(valid){
+    live.innerHTML = '<p class="prompt" style="color:var(--accent)">message transmitted successfully_</p>';
+    this.reset();
+    document.querySelectorAll('.form-control').forEach(f=>f.classList.remove('is-valid'));
+  } else {
+    live.innerHTML = '<p class="prompt" style="color:var(--warn)">error: fix the fields above_</p>';
+  }
+});
+</script>
+</body>
+</html>
